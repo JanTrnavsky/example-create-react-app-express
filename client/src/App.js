@@ -69,6 +69,7 @@ class App extends Component {
             <strong>Post to Server that just returns you what you sent in json key "post":</strong>
             <br />
             [POST] https://test-trello-cz.herokuapp.com/api/world
+            example body: <br />
             <code>&#123;"post":"aa"&#125;</code>
             <br />
             WARNING: DOES NOT RETURN A VALID JSON!!!
@@ -80,6 +81,7 @@ class App extends Component {
           />
           <button type="submit">Submit</button>
         </form>
+        <p>Response:</p>
         <p>{this.state.responseToPost}</p>
         
         <hr />
@@ -89,10 +91,13 @@ class App extends Component {
             <br />
             [GET] https://test-trello-cz.herokuapp.com/api/unicorns
             <br />
-            Returns: JSON list of unicorns in DB, status code 500 is returned in case of fail
+            Returns: <br/>
+            200 JSON list of unicorns in DB <br/>
+            500 is returned in case of fail
           </p>
           <button type="submit">Get unicorns list!</button>
-        </form> 
+        </form>
+        <p>Response:</p>
         <p>
           {this.state.unicorns}
         </p>
@@ -102,6 +107,7 @@ class App extends Component {
           <br />
           [POST] https://test-trello-cz.herokuapp.com/api/unicorns
           <br/>
+          example body: <br/>
           <code>&#123;"name":"name of fluffy unicorn"&#125;</code>
           <br/>
           <br />
@@ -112,7 +118,7 @@ class App extends Component {
           <br />
           500 if there is an error on side of server
         </p>
-
+<hr/>
         <p>
           <strong>just mirror:</strong>
           <br />

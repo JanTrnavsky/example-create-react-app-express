@@ -31,13 +31,6 @@ app.post('/api/mirror', (req, res) => {
     res.status(401)
     res.send({problem: 'You do not know our secret password, so using this endpoint is forbiden to you'})
   }
-  try {
-    JSON.parse(req.body);
-  } catch (e) {
-    res.status(400)
-    res.send({problem: "Body was not a valid JSON, no mirroring for you"})
-    return;
-  }
   res.send(
       `${req.body}`,
   );
