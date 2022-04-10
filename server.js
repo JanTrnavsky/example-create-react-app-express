@@ -26,18 +26,37 @@ app.post('/api/world', (req, res) => {
   );
 });
 
+app.post('/api/mirror', (req, res) => {
+  if (req.header('authorization') !== "milujuJednorozce") {
+    res.status(401)
+    res.send({problem: 'You do not know our secret password, so using this endpoint is forbiden to you'})
+  }
+  try {
+    JSON.parse(req.body);
+  } catch (e) {
+    res.status(400)
+    res.send({problem: "Body was not a valid JSON, no mirroring for you"})
+    return;
+  }
+  res.send(
+      `${req.body}`,
+  );
+});
+
 app.post('/api/unicorns', (req, res) => {
-  console.log(req.body)
   if (!req.body.name) {
-    res.send('request was not valid, please give a name to your unicorn')
+    res.status(400)
+    res.send({problem: 'request was not valid, please give a name to your unicorn'})
     return
   }
   try {
     fs.writeFile('db.txt', `${req.body.name}\n`, {flag: 'a+'}, err => {
     })
-    res.send(`Unicorn ${req.body.name} added to database.`)
+    res.status(201)
+    res.send({content: `Unicorn ${req.body.name} added to database.`})
   } catch (err) {
-    res.send('something went wrong unicorn was not added try again')
+    res.status(500)
+    res.send({problem: 'something went wrong unicorn was not added try again'})
   }
 })
 
@@ -45,11 +64,12 @@ app.get('/api/unicorns', (req, res) => {
   fs.readFile('db.txt', 'utf8' , (err, data) => {
     let result = []
     if (err) {
-      res.send('sorry something went wrong')
+      res.status(500)
+      res.send({problem: 'sorry something went wrong'})
       return
     }
     dataExploded = data.split('\n')
-    for (let i = 0; i < dataExploded.length; i++) {
+    for (let i = 0; i < dataExploded.length - 1; i++) {
       result.push(new Unicorn(i, dataExploded[i]))
     }
     res.send(JSON.stringify(result))

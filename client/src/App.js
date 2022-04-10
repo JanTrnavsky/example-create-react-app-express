@@ -66,9 +66,12 @@ class App extends Component {
         <p>{this.state.response}</p>
         <form onSubmit={this.handleSubmit}>
           <p>
-            <strong>Post to Server:</strong>
+            <strong>Post to Server that just returns you what you sent in json key "post":</strong>
+            <br />
             [POST] https://test-trello-cz.herokuapp.com/api/world
             <code>&#123;"post":"aa"&#125;</code>
+            <br />
+            WARNING: DOES NOT RETURN A VALID JSON!!!
           </p>
           <input
             type="text"
@@ -82,11 +85,49 @@ class App extends Component {
         <hr />
         <form onSubmit={this.handleUnicorns}>
           <p>
-            <strong>Post to Server:</strong>
+            <strong>Get unicorns:</strong>
+            <br />
             [GET] https://test-trello-cz.herokuapp.com/api/unicorns
+            <br />
+            Returns: JSON list of unicorns in DB, status code 500 is returned in case of fail
           </p>
           <button type="submit">Get unicorns list!</button>
         </form> 
+        <p>
+          {this.state.unicorns}
+        </p>
+        <hr />
+        <p>
+          <strong>Add new unicorn to list:</strong>
+          <br />
+          [POST] https://test-trello-cz.herokuapp.com/api/unicorns
+          <br/>
+          <code>&#123;"name":"name of fluffy unicorn"&#125;</code>
+          <br/>
+          <br />
+          Returns: <br />
+          201 in case of correct creation of unicorn
+          <br/>
+          400 if request is not valid
+          <br />
+          500 if there is an error on side of server
+        </p>
+
+        <p>
+          <strong>just mirror:</strong>
+          <br />
+          [POST] https://test-trello-cz.herokuapp.com/api/mirror
+          <br/>
+          <code>&#123;"key":"value"&#125;</code>
+          <br/>
+          <br />
+          Returns: <br />
+          200 and sent body
+          <br/>
+          400 if request body was not a valid JSON
+          <br />
+          401 if you do not use our secret header
+        </p>
       </div>
     );
   }
