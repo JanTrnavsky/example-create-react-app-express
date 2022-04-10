@@ -9,6 +9,7 @@ class App extends Component {
     response: '',
     post: '',
     responseToPost: '',
+    unicorns: '',
   };
 
   componentDidMount() {
@@ -39,6 +40,19 @@ class App extends Component {
 
     this.setState({ responseToPost: body });
   };
+  
+  handleUnicorns = async e => {
+    e.preventDefault();
+    const response = await fetch('/api/unicorns', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const body = await response.text();
+
+    this.setState({ unicorns: body });
+  }
 
   render() {
     return (
@@ -46,21 +60,15 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Edit <code>src/App.js</code> and save to reload.
+            This is demo app created for Czechitas testing course. For API lessons. Original project that was forked and edited is  <a href={'https://github.com/esausilva/example-create-react-app-express'}>here</a> and was just extended by Jan Trnavský
           </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
         </header>
         <p>{this.state.response}</p>
         <form onSubmit={this.handleSubmit}>
           <p>
             <strong>Post to Server:</strong>
+            [POST] https://test-trello-cz.herokuapp.com/api/world
+            <code>&#123;"post":"aa"&#125;</code>
           </p>
           <input
             type="text"
@@ -70,6 +78,15 @@ class App extends Component {
           <button type="submit">Submit</button>
         </form>
         <p>{this.state.responseToPost}</p>
+        
+        <hr />
+        <form onSubmit={this.handleUnicorns}>
+          <p>
+            <strong>Post to Server:</strong>
+            [GET] https://test-trello-cz.herokuapp.com/api/unicorns
+          </p>
+          <button type="submit">Get unicorns list!</button>
+        </form> 
       </div>
     );
   }
