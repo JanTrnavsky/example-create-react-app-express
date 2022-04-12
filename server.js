@@ -32,7 +32,7 @@ app.post('/api/mirror', (req, res) => {
     res.send({problem: 'You do not know our secret password, so using this endpoint is forbiden to you'})
   }
   res.send(
-      `${req.body}`,
+      req.body
   );
 });
 
