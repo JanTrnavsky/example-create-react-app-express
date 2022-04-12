@@ -69,6 +69,7 @@ class App extends Component {
             <strong>Post to Server that just returns you what you sent in json key "post":</strong>
             <br />
             [POST] https://test-trello-cz.herokuapp.com/api/world
+            <br/>
             example body: <br />
             <code>&#123;"post":"aa"&#125;</code>
             <br />
@@ -124,6 +125,8 @@ class App extends Component {
           <br />
           [POST] https://test-trello-cz.herokuapp.com/api/mirror
           <br/>
+          Example body:
+          <br />
           <code>&#123;"key":"value"&#125;</code>
           <br/>
           <br />
