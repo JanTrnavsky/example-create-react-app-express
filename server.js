@@ -145,6 +145,36 @@ app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
   res.send()
 })
 
+app.patch('/api/v2/unicorns/:unicornId', (req, res) => {
+  let sc = 404
+  fs.readFile('db2.txt', 'utf8' , (err, data) => {
+    if (err) {
+      res.status(500)
+      res.send({problem: 'sorry something went wrong'})
+      return
+    }
+    let dataExploded = data.split('\n')
+    for (let i = 0; i < dataExploded.length - 1; i++) {
+      if (row.startsWith(req.params.unicornId)) {
+        sc = 200
+        let row = dataExploded[i].split(`";,;"`)
+        result.push(`${row[0]}";,;"${req.body.name}";,;${row[2]}"\n`)
+      } else {
+        result.push(dataExploded[i])
+      }
+    }
+    fs.writeFile('db2.txt', result, (err) => {
+      if (err) {
+        res.status(500)
+        res.send({problem: 'sorry something went wrong'})
+        return
+      }
+    })
+  })
+  res.status(sc)
+  res.send()
+})
+
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
   app.use(express.static(path.join(__dirname, 'client/build')));
