@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 
 const sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database(':memory:', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+let db = new sqlite3.Database('./uni.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
   if (err && err.code == "SQLITE_CANTOPEN") {
     createDatabase();
     return;
@@ -16,7 +16,7 @@ let db = new sqlite3.Database(':memory:', sqlite3.OPEN_READWRITE | sqlite3.OPEN_
 });
 
 function createDatabase() {
-  var newdb = new sqlite3.Database(':memory:', (err) => {
+  var newdb = new sqlite3.Database('./uni.db', (err) => {
     if (err) {
       console.log("Getting error " + err);
       exit(1);
@@ -140,7 +140,7 @@ app.get('/api/v2/unicorns', (req, res) => {
 
 app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
   let sc = 204
-  db.all(`delete from unicorn where row_id = ${req.params.unicornId}`, (err, rows) => {
+  db.all(`delete from unicorn where row_id = ${req.params.unicornId}`, (err) => {
     if (err) {
       sc = 500
     }
