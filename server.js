@@ -86,7 +86,8 @@ app.post('/api/v2/unicorns', (req, res) => {
   }
   
   try {
-    fs.writeFile('db2.txt', `${id}";,;"${req.body.name}\n`, {flag: 'a+'}, err => {
+    id++;
+    fs.writeFile('db2.txt', `${id}";,;"${req.body.name}";,;${auth}"\n`, {flag: 'a+'}, err => {
     })
   } catch (err) {
     res.status(500)
@@ -99,16 +100,6 @@ app.post('/api/v2/unicorns', (req, res) => {
 })
 
 app.get('/api/v2/unicorns', (req, res) => {
-  /*let result = []
-  let sc = 200
-  db.all(`select row_id, unicorn_name from unicorn`, (err, rows) => {
-    if (err) {
-      sc = 500
-    }
-    rows.forEach(row => {result.push(new Unicorn(row.row_id, row.unicorn_name))});
-  });
-  res.status(sc)
-  res.send(JSON.stringify(result))*/
 
   fs.readFile('db2.txt', 'utf8' , (err, data) => {
     let result = []
@@ -117,7 +108,7 @@ app.get('/api/v2/unicorns', (req, res) => {
       res.send({problem: 'sorry something went wrong'})
       return
     }
-    dataExploded = data.split('\n')
+    let dataExploded = data.split('\n')
     for (let i = 0; i < dataExploded.length - 1; i++) {
       let row = dataExploded[i].split(`";,;"`)
       result.push(new Unicorn(row[0], row[1]))
@@ -127,7 +118,29 @@ app.get('/api/v2/unicorns', (req, res) => {
 })
 
 app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
-  let sc = 204
+  let sc = 404
+  fs.readFile('db2.txt', 'utf8' , (err, data) => {
+    if (err) {
+      res.status(500)
+      res.send({problem: 'sorry something went wrong'})
+      return
+    }
+    let dataExploded = data.split('\n')
+    for (let i = 0; i < dataExploded.length - 1; i++) {
+      if (row.startsWith(req.params.unicornId)) {
+        sc = 204
+      } else {
+        result.push(dataExploded[i])
+      }
+    }
+    fs.writeFile('db2.txt', result, (err) => {
+      if (err) {
+        res.status(500)
+        res.send({problem: 'sorry something went wrong'})
+        return
+      }
+    })
+  })
   res.status(sc)
   res.send()
 })
