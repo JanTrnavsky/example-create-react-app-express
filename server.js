@@ -3,41 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 
-const sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./uni.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-  if (err && err.code == "SQLITE_CANTOPEN") {
-    createDatabase();
-    return;
-  } else if (err) {
-    console.log("Getting error " + err);
-    exit(1);
-  }
-  runQueries(db);
-});
-
-function createDatabase() {
-  var newdb = new sqlite3.Database('./uni.db', (err) => {
-    if (err) {
-      console.log("Getting error " + err);
-      exit(1);
-    }
-    createTables(newdb);
-  });
-}
-
-function createTables(newdb) {
-  newdb.exec(`
-    create table unicorn (
-        unicorn_name text not null,
-        unicorn_auth text not null
-    );
-   `, ()  => {
-    runQueries(newdb);
-  });
-}
-
 const app = express();
 const port = process.env.PORT || 5000;
+let id = 0
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -117,16 +85,21 @@ app.post('/api/v2/unicorns', (req, res) => {
     auth = req.body.auth
   }
   
-  db.exec(`
-    insert into unicorn (unicorn_name, unicorn_auth)
-    values (${req.body.name}, ${auth})
-  `)
+  try {
+    fs.writeFile('db2.txt', `${id}";,;"${req.body.name}\n`, {flag: 'a+'}, err => {
+    })
+  } catch (err) {
+    res.status(500)
+    res.send({problem: 'something went wrong unicorn was not added try again'})
+    return
+  }
+  
   res.status(201)
   res.send({content: `Unicorn ${req.body.name} added to database.`, manipulationToken: auth})
 })
 
 app.get('/api/v2/unicorns', (req, res) => {
-  let result = []
+  /*let result = []
   let sc = 200
   db.all(`select row_id, unicorn_name from unicorn`, (err, rows) => {
     if (err) {
@@ -135,16 +108,26 @@ app.get('/api/v2/unicorns', (req, res) => {
     rows.forEach(row => {result.push(new Unicorn(row.row_id, row.unicorn_name))});
   });
   res.status(sc)
-  res.send(JSON.stringify(result))
+  res.send(JSON.stringify(result))*/
+
+  fs.readFile('db2.txt', 'utf8' , (err, data) => {
+    let result = []
+    if (err) {
+      res.status(500)
+      res.send({problem: 'sorry something went wrong'})
+      return
+    }
+    dataExploded = data.split('\n')
+    for (let i = 0; i < dataExploded.length - 1; i++) {
+      let row = dataExploded[i].split(`";,;"`)
+      result.push(new Unicorn(row[0], row[1]))
+    }
+    res.send(JSON.stringify(result))
+  })
 })
 
 app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
   let sc = 204
-  db.all(`delete from unicorn where row_id = ${req.params.unicornId}`, (err) => {
-    if (err) {
-      sc = 500
-    }
-  });
   res.status(sc)
   res.send()
 })
