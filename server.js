@@ -175,6 +175,15 @@ app.patch('/api/v2/unicorns/:unicornId', (req, res) => {
   res.send()
 })
 
+app.get('/api/v2/status', (req, res) => {
+  let sc = 200
+  if(req.params.status && req.params.status > 100 && req.params.status < 600) {
+    sc = req.params.status
+  }
+  res.status(sc)
+  res.send
+});
+
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
   app.use(express.static(path.join(__dirname, 'client/build')));
