@@ -3,6 +3,39 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 
+const sqlite3 = require('sqlite3').verbose();
+let db = new sqlite3.Database(':memory:', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+  if (err && err.code == "SQLITE_CANTOPEN") {
+    createDatabase();
+    return;
+  } else if (err) {
+    console.log("Getting error " + err);
+    exit(1);
+  }
+  runQueries(db);
+});
+
+function createDatabase() {
+  var newdb = new sqlite3.Database(':memory:', (err) => {
+    if (err) {
+      console.log("Getting error " + err);
+      exit(1);
+    }
+    createTables(newdb);
+  });
+}
+
+function createTables(newdb) {
+  newdb.exec(`
+    create table unicorn (
+        unicorn_name text not null,
+        unicorn_auth text not null
+    );
+   `, ()  => {
+    runQueries(newdb);
+  });
+}
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -67,6 +100,53 @@ app.get('/api/unicorns', (req, res) => {
     }
     res.send(JSON.stringify(result))
   })
+})
+
+
+app.post('/api/v2/unicorns', (req, res) => {
+  
+  let auth
+  if (!req.body.name) {
+    res.status(400)
+    res.send({problem: 'request was not valid, please give a name to your unicorn'})
+    return
+  }
+  if (!req.body.auth) {
+    auth = (Math.random() + 1).toString(36).substring(7)
+  } else {
+    auth = req.body.auth
+  }
+  
+  db.exec(`
+    insert into unicorn (unicorn_name, unicorn_auth)
+    values (${req.body.name}, ${auth})
+  `)
+  res.status(201)
+  res.send({content: `Unicorn ${req.body.name} added to database.`, manipulationToken: auth})
+})
+
+app.get('/api/v2/unicorns', (req, res) => {
+  let result = []
+  let sc = 200
+  db.all(`select row_id, unicorn_name from unicorn`, (err, rows) => {
+    if (err) {
+      sc = 500
+    }
+    rows.forEach(row => {result.push(new Unicorn(row.row_id, row.unicorn_name))});
+  });
+  res.status(sc)
+  res.send(JSON.stringify(result))
+})
+
+app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
+  let sc = 204
+  db.all(`delete from unicorn where row_id = ${req.params.unicornId}`, (err, rows) => {
+    if (err) {
+      sc = 500
+    }
+  });
+  res.status(sc)
+  res.send()
 })
 
 if (process.env.NODE_ENV === 'production') {
