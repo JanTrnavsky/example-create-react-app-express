@@ -117,8 +117,14 @@ app.get('/api/v2/unicorns', (req, res) => {
   })
 })
 
-app.delete('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
+app.delete('/api/v2/unicorns/[0-9]+', (req, res) => {
+  let unicornId = parseInt(req.path.substring(17))
   let sc = 404
+  if (Number.isNaN(unicornId)) {
+    res.status(sc)
+    res.send()
+    return
+  }
   fs.readFile('db2.txt', 'utf8' , (err, data) => {
     if (err) {
       res.status(500)
