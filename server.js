@@ -87,7 +87,7 @@ app.post('/api/v2/unicorns', (req, res) => {
   
   try {
     id++;
-    fs.writeFile('db2.txt', `${id}";,;"${req.body.name}";,;${auth}"\n`, {flag: 'a+'}, err => {
+    fs.writeFile('db2.txt', `${id}";,;"${req.body.name}";,;"${auth}"\n`, {flag: 'a+'}, err => {
     })
   } catch (err) {
     res.status(500)
@@ -117,7 +117,7 @@ app.get('/api/v2/unicorns', (req, res) => {
   })
 })
 
-app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
+app.delete('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
   let sc = 404
   fs.readFile('db2.txt', 'utf8' , (err, data) => {
     if (err) {
@@ -145,7 +145,7 @@ app.delete('/api/v2/unicorns/:unicornId', (req, res) => {
   res.send()
 })
 
-app.patch('/api/v2/unicorns/:unicornId', (req, res) => {
+app.put('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
   let sc = 404
   fs.readFile('db2.txt', 'utf8' , (err, data) => {
     if (err) {
@@ -181,7 +181,7 @@ app.get('/api/v2/status', (req, res) => {
     sc = req.params.status
   }
   res.status(sc)
-  res.send
+  res.end()
 });
 
 if (process.env.NODE_ENV === 'production') {
