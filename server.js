@@ -127,7 +127,8 @@ app.delete('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
     }
     let dataExploded = data.split('\n')
     for (let i = 0; i < dataExploded.length - 1; i++) {
-      if (row.startsWith(req.params.unicornId)) {
+      let row = dataExploded[i].split(`";,;"`)
+      if (row.startsWith(`${req.params.unicornId}";,;"`)) {
         sc = 204
       } else {
         result.push(dataExploded[i])
@@ -155,7 +156,8 @@ app.put('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
     }
     let dataExploded = data.split('\n')
     for (let i = 0; i < dataExploded.length - 1; i++) {
-      if (row.startsWith(req.params.unicornId)) {
+      let row = dataExploded[i].split(`";,;"`)
+      if (row.startsWith(`${req.params.unicornId}";,;"`)) {
         sc = 200
         let row = dataExploded[i].split(`";,;"`)
         result.push(`${row[0]}";,;"${req.body.name}";,;${row[2]}"\n`)
@@ -177,8 +179,8 @@ app.put('/api/v2/unicorns/:unicornId(\d+)', (req, res) => {
 
 app.get('/api/v2/status', (req, res) => {
   let sc = 200
-  if(req.params.status && req.params.status > 100 && req.params.status < 600) {
-    sc = req.params.status
+  if(req.query.status && req.query.status > 100 && req.query.status < 600) {
+    sc = req.query.status
   }
   res.status(sc)
   res.end()
